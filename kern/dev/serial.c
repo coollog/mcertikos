@@ -47,29 +47,58 @@
 
 bool serial_exists;
 
+// CUSTOM
+#include <lib/spinlock.h>
+static spinlock_t serial_exists_lk;
+static spinlock_t delay_lk;
+static spinlock_t serial_proc_data_lk;
+
 // Stupid I/O delay routine necessitated by historical PC design flaws
 static void
 delay(void)
 {
+	// CUSTOM
+	spinlock_acquire(&delay_lk);
+
 	inb(0x84);
 	inb(0x84);
 	inb(0x84);
 	inb(0x84);
+
+	// CUSTOM
+	spinlock_release(&delay_lk);
 }
 
 static int
 serial_proc_data(void)
 {
+	// CUSTOM
+	spinlock_acquire(&serial_proc_data_lk);
+
+	int toReturn;
+
 	if (!(inb(COM1+COM_LSR) & COM_LSR_DATA))
-		return -1;
-	return inb(COM1+COM_RX);
+		toReturn = -1;
+	else
+		toReturn = inb(COM1+COM_RX);
+
+	// CUSTOM
+	spinlock_release(&serial_proc_data_lk);
+
+	return toReturn;
 }
 
 void
 serial_intr(void)
 {
+	// CUSTOM
+	spinlock_acquire(&serial_exists_lk);
+
 	if (serial_exists)
 		cons_intr(serial_proc_data);
+
+	// CUSTOM
+	spinlock_release(&serial_exists_lk);
 }
 
 static int
@@ -93,8 +122,14 @@ serial_reformatnewline(int c, int p)
 void
 serial_putc(char c)
 {
+	// CUSTOM
+	spinlock_acquire(&serial_exists_lk);
+
 	if (!serial_exists)
 		return;
+
+	// CUSTOM
+	spinlock_release(&serial_exists_lk);
 
 	int i;
 	for (i = 0;
@@ -109,6 +144,9 @@ serial_putc(char c)
 void
 serial_init(void)
 {
+	// CUSTOM
+	spinlock_acquire(&serial_exists_lk);
+
 	/* turn off interrupt */
 	outb(COM1 + COM_IER, 0);
 
@@ -133,14 +171,23 @@ serial_init(void)
 	serial_exists = (inb(COM1+COM_LSR) != 0xFF);
 	(void) inb(COM1+COM_IIR);
 	(void) inb(COM1+COM_RX);
+
+	// CUSTOM
+	spinlock_release(&serial_exists_lk);
 }
 
 void
 serial_intenable(void)
 {
+	// CUSTOM
+	spinlock_acquire(&serial_exists_lk);
+
 	if (serial_exists) {
 		outb(COM1+COM_IER, 1);
 		//intr_enable(IRQ_SERIAL13);
 		serial_intr();
 	}
+
+	// CUSTOM
+	spinlock_release(&serial_exists_lk);
 }
