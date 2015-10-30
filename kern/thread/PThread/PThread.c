@@ -12,7 +12,7 @@ static spinlock_t pthread_lk;
 
 static spinlock_t pthread_lk;
 static spinlock_t pthread_init_lk;
-// static spinlock_t pthread_sched_lk;
+static spinlock_t pthread_sched_lk[NUM_CPUS];
 static int milliElapsed[NUM_CPUS];
 
 void thread_init(unsigned int mbi_addr)
@@ -92,8 +92,6 @@ void thread_yield(void)
  * Updates elapsed time on CPU and yields if too long.
  */
 void sched_update() {
-	static spinlock_t pthread_sched_lk[NUM_CPUS];
-
 	int curCPU = get_pcpu_idx();
 	spinlock_acquire(&pthread_sched_lk[curCPU]);
 
