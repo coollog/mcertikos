@@ -45,7 +45,7 @@ trap_init(unsigned int cpu_idx){
   for (i = IRQ_TIMER; i <= IRQ_IDE2; i ++) {
     trap_handler_register(cpu_idx, T_IRQ0 + i, interrupt_handler);
   }
-  trap_handler_register(cpu_idx, T_SYSCALL, trap);
+  trap_handler_register(cpu_idx, T_SYSCALL, syscall_dispatch);
 
 	if (cpu_idx == 0){
 		KERN_INFO("[BSP KERN] Done.\n");
