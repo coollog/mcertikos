@@ -105,7 +105,7 @@ static int timer_intr_handler (void)
   // sched_update();
 
   intr_local_enable();
-  intr_eoi();
+  // intr_eoi();
   return 0;
 }
 
