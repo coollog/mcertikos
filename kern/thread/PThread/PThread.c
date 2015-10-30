@@ -8,7 +8,7 @@
 #include "import.h"
 
 // CUSTOM
-static spinlock pthread_lk;
+static spinlock_t pthread_lk;
 
 void thread_init(unsigned int mbi_addr)
 {
