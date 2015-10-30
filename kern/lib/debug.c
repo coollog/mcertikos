@@ -27,7 +27,6 @@ debug_info(const char *fmt, ...)
 	vdprintf(fmt, ap);
 	va_end(ap);
 
-
 	// CUSTOM
 	spinlock_release(&debug_lk);
 
