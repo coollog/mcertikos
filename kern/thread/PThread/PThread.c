@@ -93,7 +93,6 @@ void thread_yield(void)
  * Updates elapsed time on CPU and yields if too long.
  */
 void sched_update() {
-	// CUSTOM
 	spinlock_acquire(&pthread_lk);
 
 	int curCPU = get_pcpu_idx();
@@ -102,9 +101,11 @@ void sched_update() {
 	if (milliElapsed[curCPU] >= SCHED_SLICE) {
 		milliElapsed[curCPU] -= SCHED_SLICE;
 		KERN_DEBUG("milliElapsed exceeded %d for cpu %d, new=%d\n", SCHED_SLICE, curCPU, milliElapsed[curCPU]);
-		thread_yield();
-	}
 
-	// CUSTOM
-	spinlock_release(&pthread_lk);
+		spinlock_release(&pthread_lk);
+
+		thread_yield();
+	} else {
+		spinlock_release(&pthread_lk);
+	}
 }
