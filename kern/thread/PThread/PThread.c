@@ -14,7 +14,14 @@ void thread_init(unsigned int mbi_addr)
 {
 	tqueue_init(mbi_addr);
 	set_curid(0);
+
+	// CUSTOM
+	spinlock_acquire(&pthread_lk);
+
 	tcb_set_state(0, TSTATE_RUN);
+
+	// CUSTOM
+	spinlock_release(&pthread_lk);
 }
 
 /**
@@ -24,17 +31,18 @@ void thread_init(unsigned int mbi_addr)
  */
 unsigned int thread_spawn(void *entry, unsigned int id, unsigned int quota)
 {
+	unsigned int pid;
+
 	// CUSTOM
 	spinlock_acquire(&pthread_lk);
 
-	unsigned int pid;
-
 	pid = kctx_new(entry, id, quota);
 	tcb_set_state(pid, TSTATE_READY);
-	tqueue_enqueue(NUM_IDS, pid);
 
 	// CUSTOM
 	spinlock_release(&pthread_lk);
+
+	tqueue_enqueue(NUM_IDS, pid);
 
 	return pid;
 }
