@@ -13,11 +13,11 @@ static spinlock_t pthread_lk;
 
 void thread_init(unsigned int mbi_addr)
 {
-	// CUSTOM
-	spinlock_acquire(&pthread_lk);
-
 	tqueue_init(mbi_addr);
 	set_curid(0);
+
+	// CUSTOM
+	spinlock_acquire(&pthread_lk);
 
 	tcb_set_state(0, TSTATE_RUN);
 
