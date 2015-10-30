@@ -50,42 +50,23 @@ bool serial_exists;
 // CUSTOM
 #include <lib/spinlock.h>
 static spinlock_t serial_exists_lk;
-static spinlock_t delay_lk;
-static spinlock_t serial_proc_data_lk;
 
 // Stupid I/O delay routine necessitated by historical PC design flaws
 static void
 delay(void)
 {
-	// CUSTOM
-	spinlock_acquire(&delay_lk);
-
 	inb(0x84);
 	inb(0x84);
 	inb(0x84);
 	inb(0x84);
-
-	// CUSTOM
-	spinlock_release(&delay_lk);
 }
 
 static int
 serial_proc_data(void)
 {
-	// CUSTOM
-	spinlock_acquire(&serial_proc_data_lk);
-
-	int toReturn;
-
 	if (!(inb(COM1+COM_LSR) & COM_LSR_DATA))
-		toReturn = -1;
-	else
-		toReturn = inb(COM1+COM_RX);
-
-	// CUSTOM
-	spinlock_release(&serial_proc_data_lk);
-
-	return toReturn;
+		return -1;
+	return inb(COM1+COM_RX);
 }
 
 void

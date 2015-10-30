@@ -6,10 +6,6 @@
 #include <lib/debug.h>
 #include <lib/stdarg.h>
 
-// CUSTOM
-#include <lib/spinlock.h>
-static spinlock_t dprintf_lk;
-
 struct dprintbuf
 {
     int idx; /* current buffer index */
@@ -58,18 +54,12 @@ vdprintf (const char *fmt, va_list ap)
 int
 dprintf (const char *fmt, ...)
 {
-    // // CUSTOM
-    // spinlock_acquire(&dprintf_lk);
-
     va_list ap;
     int cnt;
 
     va_start(ap, fmt);
     cnt = vdprintf (fmt, ap);
     va_end(ap);
-
-    // // CUSTOM
-    // spinlock_release(&dprintf_lk);
 
     return cnt;
 }
