@@ -17,9 +17,6 @@ static int milliElapsed[NUM_CPUS];
 
 void thread_init(unsigned int mbi_addr)
 {
-	// CUSTOM
-	spinlock_acquire(&pthread_init_lk);
-
 	tqueue_init(mbi_addr);
 	set_curid(0);
 
@@ -32,9 +29,6 @@ void thread_init(unsigned int mbi_addr)
 	for (i = 0; i < NUM_CPUS; i ++) {
 		milliElapsed[i] = 0;
 	}
-
-	// CUSTOM
-	spinlock_release(&pthread_init_lk);
 }
 
 /**
