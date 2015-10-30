@@ -99,12 +99,12 @@ static int spurious_intr_handler (void)
 static int timer_intr_handler (void)
 {
   // CUSTOM
-  // intr_local_disable();
+  intr_local_disable();
 
   // KERN_DEBUG("Got timer interrupt for cpu %d\n", get_pcpu_idx());
   sched_update();
 
-  // intr_local_enable();
+  intr_local_enable();
   intr_eoi();
   return 0;
 }
