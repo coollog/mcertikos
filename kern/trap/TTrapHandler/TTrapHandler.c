@@ -98,8 +98,11 @@ static int spurious_intr_handler (void)
 
 static int timer_intr_handler (void)
 {
-    intr_eoi ();
-    return 0;
+  // CUSTOM
+  sched_update();
+
+  intr_eoi();
+  return 0;
 }
 
 static int default_intr_handler (void)
