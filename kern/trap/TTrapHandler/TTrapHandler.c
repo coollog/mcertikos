@@ -11,10 +11,6 @@
 
 #include "import.h"
 
-// CUSTOM
-#include <lib/spinlock.h>
-static spinlock_t timer_lk;
-
 static void trap_dump(tf_t *tf)
 {
 	if (tf == NULL)
@@ -102,12 +98,13 @@ static int spurious_intr_handler (void)
 
 static int timer_intr_handler (void)
 {
-  spinlock_acquire(&timer_lk);
   // CUSTOM
+  intr_local_disable();
+
   KERN_DEBUG("Got timer interrupt for cpu %d\n", get_pcpu_idx());
   sched_update();
-  spinlock_release(&timer_lk);
 
+  intr_local_enable();
   intr_eoi();
   return 0;
 }
