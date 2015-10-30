@@ -53,7 +53,7 @@ typedef void (*trap_cb_t) (tf_t *);
 
 trap_cb_t TRAP_HANDLER[NUM_CPUS][256];
 
-#define TRAP_CB_N 49;
+#define TRAP_CB_N 49
 tf_t TRAP_CB[TRAP_CB_N];
 
 void trap_init(unsigned int cpu_idx);
