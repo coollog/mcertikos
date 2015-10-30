@@ -10,13 +10,15 @@
 // CUSTOM
 static spinlock_t pthread_lk;
 
+static spinlock_t pthread_lk;
+static spinlock_t pthread_init_lk;
 static spinlock_t pthread_sched_lk;
 static int milliElapsed[NUM_CPUS];
 
 void thread_init(unsigned int mbi_addr)
 {
 	// CUSTOM
-	spinlock_acquire(&pthread_lk);
+	spinlock_acquire(&pthread_init_lk);
 
 	tqueue_init(mbi_addr);
 	set_curid(0);
@@ -32,7 +34,7 @@ void thread_init(unsigned int mbi_addr)
 	}
 
 	// CUSTOM
-	spinlock_release(&pthread_lk);
+	spinlock_release(&pthread_init_lk);
 }
 
 /**
