@@ -10,6 +10,7 @@ trap_init_array(void)
 {
   KERN_ASSERT(inited == FALSE);
   memzero(&(TRAP_HANDLER), sizeof(trap_cb_t) * 8 * 256);
+  memzero(&(TRAP_CB), sizeof(trap_cb) * TRAP_CB_N);
   inited = TRUE;
 }
 
@@ -39,9 +40,8 @@ trap_init(unsigned int cpu_idx){
   // TODO: for CPU # [cpu_idx], register appropriate trap handler for each trap number,
   // with trap_handler_register function defined above.
   int i;
-  for (i = 0; i < 256; i ++) {
-    trap_cb_t cb = malloc(sizeof(tf_t));
-    trap_handler_register(cpu_idx, i, cb);
+  for (i = 0; i < TRAP_CB_N; i ++) {
+    trap_handler_register(cpu_idx, i, &TRAP_CB[i]);
   }
 
 	if (cpu_idx == 0){
