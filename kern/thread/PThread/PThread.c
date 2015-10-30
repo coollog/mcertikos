@@ -15,11 +15,11 @@ static int milliElapsed[NUM_CPUS];
 
 void thread_init(unsigned int mbi_addr)
 {
-	tqueue_init(mbi_addr);
-	set_curid(0);
-
 	// CUSTOM
 	spinlock_acquire(&pthread_lk);
+
+	tqueue_init(mbi_addr);
+	set_curid(0);
 
 	tcb_set_state(0, TSTATE_RUN);
 
