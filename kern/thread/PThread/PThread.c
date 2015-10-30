@@ -12,7 +12,7 @@ static spinlock_t pthread_lk;
 
 static spinlock_t pthread_lk;
 static spinlock_t pthread_init_lk;
-static spinlock_t pthread_sched_lk;
+// static spinlock_t pthread_sched_lk;
 static int milliElapsed[NUM_CPUS];
 
 void thread_init(unsigned int mbi_addr)
@@ -92,9 +92,10 @@ void thread_yield(void)
  * Updates elapsed time on CPU and yields if too long.
  */
 void sched_update() {
-	spinlock_acquire(&pthread_sched_lk);
+	static spinlock_t pthread_sched_lk[NUM_CPUS];
 
 	int curCPU = get_pcpu_idx();
+	spinlock_acquire(&pthread_sched_lk[curCPU]);
 
 	int elapsedTime = 1000 / LAPIC_TIMER_INTR_FREQ;
 	milliElapsed[curCPU] += elapsedTime;
@@ -103,10 +104,10 @@ void sched_update() {
 		milliElapsed[curCPU] = 0;
 		// KERN_DEBUG("milliElapsed exceeded %d for cpu %d, new=%d\n", SCHED_SLICE, curCPU, milliElapsed[curCPU]);
 
-		spinlock_release(&pthread_sched_lk);
+		spinlock_release(&pthread_sched_lk[curCPU]);
 
 		thread_yield();
 	} else {
-		spinlock_release(&pthread_sched_lk);
+		spinlock_release(&pthread_sched_lk[curCPU]);
 	}
 }
