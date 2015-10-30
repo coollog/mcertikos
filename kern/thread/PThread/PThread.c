@@ -9,7 +9,7 @@
 
 // CUSTOM
 static spinlock_t pthread_lk;
-// static int milliElapsed[NUM_CPUS];
+static int milliElapsed[NUM_CPUS];
 
 void thread_init(unsigned int mbi_addr)
 {
@@ -22,11 +22,11 @@ void thread_init(unsigned int mbi_addr)
 	tcb_set_state(0, TSTATE_RUN);
 
 	// CUSTOM
-	// Initialize scheduler elapsed time.
-	// int i;
-	// for (i = 0; i < NUM_CPUS; i ++) {
-	// 	milliElapsed[i] = 0;
-	// }
+	Initialize scheduler elapsed time.
+	int i;
+	for (i = 0; i < NUM_CPUS; i ++) {
+		milliElapsed[i] = 0;
+	}
 
 	// CUSTOM
 	spinlock_release(&pthread_lk);
@@ -92,12 +92,12 @@ void thread_yield(void)
 /**
  * Updates elapsed time on CPU and yields if too long.
  */
-// void sched_update() {
-// 	int curCPU = get_pcpu_idx();
+void sched_update() {
+	int curCPU = get_pcpu_idx();
 
-// 	milliElapsed[curCPU] += 1000 / LAPIC_TIMER_INTR_FREQ;
-// 	if (milliElapsed[curCPU] >= SCHED_SLICE) {
-// 		milliElapsed[curCPU] -= SCHED_SLICE;
-// 		thread_yield();
-// 	}
-// }
+	milliElapsed[curCPU] += 1000 / LAPIC_TIMER_INTR_FREQ;
+	if (milliElapsed[curCPU] >= SCHED_SLICE) {
+		milliElapsed[curCPU] -= SCHED_SLICE;
+		thread_yield();
+	}
+}
