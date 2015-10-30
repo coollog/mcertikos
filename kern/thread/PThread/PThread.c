@@ -25,6 +25,7 @@ void thread_init(unsigned int mbi_addr)
 
 	// CUSTOM
 	// Initialize scheduler elapsed time.
+	KERN_DEBUG("Initializing milliElapsed...");
 	int i;
 	for (i = 0; i < NUM_CPUS; i ++) {
 		milliElapsed[i] = 0;
