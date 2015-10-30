@@ -100,7 +100,7 @@ static int timer_intr_handler (void)
 {
   // CUSTOM
   KERN_DEBUG("Got timer interrupt for cpu %d\n", get_pcpu_idx());
-  // sched_update();
+  sched_update();
 
   intr_eoi();
   return 0;
