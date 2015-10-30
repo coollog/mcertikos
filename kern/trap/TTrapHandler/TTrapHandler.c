@@ -99,7 +99,7 @@ static int spurious_intr_handler (void)
 static int timer_intr_handler (void)
 {
   // CUSTOM
-  sched_update();
+  // sched_update();
 
   intr_eoi();
   return 0;
