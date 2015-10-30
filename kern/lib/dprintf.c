@@ -7,6 +7,7 @@
 #include <lib/spinlock.h>
 #include <lib/stdarg.h>
 
+// CUSTOM
 static spinlock_t dprintf_lk;
 static spinlock_t vdprintf_lk;
 
@@ -43,6 +44,7 @@ putch (int ch, struct dprintbuf *b)
 int
 vdprintf (const char *fmt, va_list ap)
 {
+    // CUSTOM
     spinlock_acquire(&vdprintf_lk);
 
     struct dprintbuf b;
@@ -54,6 +56,7 @@ vdprintf (const char *fmt, va_list ap)
     b.buf[b.idx] = 0;
     cputs (b.buf);
 
+    // CUSTOM
     spinlock_release(&vdprintf_lk);
 
     return b.cnt;
@@ -62,6 +65,7 @@ vdprintf (const char *fmt, va_list ap)
 int
 dprintf (const char *fmt, ...)
 {
+    // CUSTOM
     spinlock_acquire(&dprintf_lk);
 
     va_list ap;
@@ -71,6 +75,7 @@ dprintf (const char *fmt, ...)
     cnt = vdprintf (fmt, ap);
     va_end(ap);
 
+    // CUSTOM
     spinlock_release(&dprintf_lk);
 
     return cnt;
