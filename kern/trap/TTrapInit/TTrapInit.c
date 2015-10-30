@@ -38,8 +38,9 @@ trap_init(unsigned int cpu_idx){
 
   // TODO: for CPU # [cpu_idx], register appropriate trap handler for each trap number,
   // with trap_handler_register function defined above.
-  for (int i = 0; i < 256; i ++) {
-    trap_cb_t cb = malloc(tf_t);
+  int i;
+  for (i = 0; i < 256; i ++) {
+    trap_cb_t cb = malloc(sizeof(tf_t));
     trap_handler_register(cpu_idx, i, cb);
   }
 
