@@ -58,8 +58,8 @@ vdprintf (const char *fmt, va_list ap)
 int
 dprintf (const char *fmt, ...)
 {
-    // CUSTOM
-    spinlock_acquire(&dprintf_lk);
+    // // CUSTOM
+    // spinlock_acquire(&dprintf_lk);
 
     va_list ap;
     int cnt;
@@ -68,8 +68,8 @@ dprintf (const char *fmt, ...)
     cnt = vdprintf (fmt, ap);
     va_end(ap);
 
-    // CUSTOM
-    spinlock_release(&dprintf_lk);
+    // // CUSTOM
+    // spinlock_release(&dprintf_lk);
 
     return cnt;
 }
