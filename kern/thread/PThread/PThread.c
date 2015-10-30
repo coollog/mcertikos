@@ -8,7 +8,9 @@
 #include "import.h"
 
 // CUSTOM
-static spinlock_t pthread_lk;
+static spinlock_t pthread_init_lk;
+static spinlock_t pthread_spawn_lk;
+static spinlock_t pthread_yield_lk;
 
 void thread_init(unsigned int mbi_addr)
 {
@@ -16,12 +18,12 @@ void thread_init(unsigned int mbi_addr)
 	set_curid(0);
 
 	// CUSTOM
-	spinlock_acquire(&pthread_lk);
+	spinlock_acquire(&pthread_init_lk);
 
 	tcb_set_state(0, TSTATE_RUN);
 
 	// CUSTOM
-	spinlock_release(&pthread_lk);
+	spinlock_release(&pthread_init_lk);
 }
 
 /**
@@ -34,13 +36,13 @@ unsigned int thread_spawn(void *entry, unsigned int id, unsigned int quota)
 	unsigned int pid;
 
 	// CUSTOM
-	spinlock_acquire(&pthread_lk);
+	spinlock_acquire(&pthread_spawn_lk);
 
 	pid = kctx_new(entry, id, quota);
 	tcb_set_state(pid, TSTATE_READY);
 
 	// CUSTOM
-	spinlock_release(&pthread_lk);
+	spinlock_release(&pthread_spawn_lk);
 
 	tqueue_enqueue(NUM_IDS, pid);
 
@@ -59,7 +61,7 @@ unsigned int thread_spawn(void *entry, unsigned int id, unsigned int quota)
 void thread_yield(void)
 {
 	// CUSTOM
-	spinlock_acquire(&pthread_lk);
+	spinlock_acquire(&pthread_yield_lk);
 
 	unsigned int old_cur_pid;
 	unsigned int new_cur_pid;
@@ -77,5 +79,5 @@ void thread_yield(void)
 	}
 
 	// CUSTOM
-	spinlock_release(&pthread_lk);
+	spinlock_release(&pthread_yield_lk);
 }
