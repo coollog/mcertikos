@@ -98,6 +98,7 @@ void sched_update() {
 	int curCPU = get_pcpu_idx();
 
 	milliElapsed[curCPU] += 1000 / LAPIC_TIMER_INTR_FREQ;
+	KERN_DEBUG("milliElapsed for cpu %d = %d\n", curCPU, milliElapsed[curCPU]);
 	if (milliElapsed[curCPU] >= SCHED_SLICE) {
 		milliElapsed[curCPU] -= SCHED_SLICE;
 		KERN_DEBUG("milliElapsed exceeded %d for cpu %d, new=%d\n", SCHED_SLICE, curCPU, milliElapsed[curCPU]);
