@@ -8,6 +8,8 @@
 
 // CUSTOM
 static spinlock_t debug_normal_lk;
+static spinlock_t debug_info_lk;
+static spinlock_t debug_warn_lk;
 
 void
 debug_init(void)
@@ -19,10 +21,17 @@ debug_info(const char *fmt, ...)
 {
 #ifdef DEBUG_MSG
 
+	// CUSTOM
+	spinlock_acquire(&debug_info_lk);
+
 	va_list ap;
 	va_start(ap, fmt);
 	vdprintf(fmt, ap);
 	va_end(ap);
+
+
+	// CUSTOM
+	spinlock_release(&debug_info_lk);
 
 #endif
 }
@@ -32,8 +41,8 @@ debug_info(const char *fmt, ...)
 void
 debug_normal(const char *file, int line, const char *fmt, ...)
 {
-	// // CUSTOM
-	// spinlock_acquire(&debug_normal_lk);
+	// CUSTOM
+	spinlock_acquire(&debug_normal_lk);
 
 	dprintf("[D] %s:%d: ", file, line);
 
@@ -42,8 +51,8 @@ debug_normal(const char *file, int line, const char *fmt, ...)
 	vdprintf(fmt, ap);
 	va_end(ap);
 
-	// // CUSTOM
-	// spinlock_release(&debug_normal_lk);
+	// CUSTOM
+	spinlock_release(&debug_normal_lk);
 }
 
 #define DEBUG_TRACEFRAMES	10
@@ -88,12 +97,18 @@ debug_panic(const char *file, int line, const char *fmt,...)
 void
 debug_warn(const char *file, int line, const char *fmt,...)
 {
+	// CUSTOM
+	spinlock_acquire(&debug_warn_lk);
+
 	dprintf("[W] %s:%d: ", file, line);
 
 	va_list ap;
 	va_start(ap, fmt);
 	vdprintf(fmt, ap);
 	va_end(ap);
+
+	// CUSTOM
+	spinlock_release(&debug_warn_lk);
 }
 
 #endif /* DEBUG_MSG */
