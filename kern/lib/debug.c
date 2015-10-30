@@ -7,9 +7,7 @@
 #include <lib/spinlock.h>
 
 // CUSTOM
-static spinlock_t debug_normal_lk;
-static spinlock_t debug_info_lk;
-static spinlock_t debug_warn_lk;
+static spinlock_t debug_lk;
 
 void
 debug_init(void)
@@ -22,7 +20,7 @@ debug_info(const char *fmt, ...)
 #ifdef DEBUG_MSG
 
 	// CUSTOM
-	spinlock_acquire(&debug_info_lk);
+	spinlock_acquire(&debug_lk);
 
 	va_list ap;
 	va_start(ap, fmt);
@@ -31,7 +29,7 @@ debug_info(const char *fmt, ...)
 
 
 	// CUSTOM
-	spinlock_release(&debug_info_lk);
+	spinlock_release(&debug_lk);
 
 #endif
 }
@@ -42,7 +40,7 @@ void
 debug_normal(const char *file, int line, const char *fmt, ...)
 {
 	// CUSTOM
-	spinlock_acquire(&debug_normal_lk);
+	spinlock_acquire(&debug_lk);
 
 	dprintf("[D] %s:%d: ", file, line);
 
@@ -52,7 +50,7 @@ debug_normal(const char *file, int line, const char *fmt, ...)
 	va_end(ap);
 
 	// CUSTOM
-	spinlock_release(&debug_normal_lk);
+	spinlock_release(&debug_lk);
 }
 
 #define DEBUG_TRACEFRAMES	10
@@ -98,7 +96,7 @@ void
 debug_warn(const char *file, int line, const char *fmt,...)
 {
 	// CUSTOM
-	spinlock_acquire(&debug_warn_lk);
+	spinlock_acquire(&debug_lk);
 
 	dprintf("[W] %s:%d: ", file, line);
 
@@ -108,7 +106,7 @@ debug_warn(const char *file, int line, const char *fmt,...)
 	va_end(ap);
 
 	// CUSTOM
-	spinlock_release(&debug_warn_lk);
+	spinlock_release(&debug_lk);
 }
 
 #endif /* DEBUG_MSG */
