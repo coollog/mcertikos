@@ -104,7 +104,7 @@ void sched_update() {
 
 		spinlock_release(&pthread_sched_lk[curCPU]);
 
-		// thread_yield();
+		thread_yield();
 	} else {
 		spinlock_release(&pthread_sched_lk[curCPU]);
 	}
