@@ -83,12 +83,12 @@ void thread_yield(void)
 	tcb_set_state(new_cur_pid, TSTATE_RUN);
 	set_curid(new_cur_pid);
 
+	// CUSTOM
+	spinlock_release(&pthread_lk);
+
 	if (old_cur_pid != new_cur_pid){
 		kctx_switch(old_cur_pid, new_cur_pid);
 	}
-
-	// CUSTOM
-	spinlock_release(&pthread_lk);
 }
 
 // CUSTOM
