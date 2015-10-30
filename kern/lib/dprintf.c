@@ -9,7 +9,6 @@
 // CUSTOM
 #include <lib/spinlock.h>
 static spinlock_t dprintf_lk;
-static spinlock_t vdprintf_lk;
 
 struct dprintbuf
 {
@@ -44,9 +43,6 @@ putch (int ch, struct dprintbuf *b)
 int
 vdprintf (const char *fmt, va_list ap)
 {
-    // CUSTOM
-    spinlock_acquire(&vdprintf_lk);
-
     struct dprintbuf b;
 
     b.idx = 0;
@@ -55,9 +51,6 @@ vdprintf (const char *fmt, va_list ap)
 
     b.buf[b.idx] = 0;
     cputs (b.buf);
-
-    // CUSTOM
-    spinlock_release(&vdprintf_lk);
 
     return b.cnt;
 }
