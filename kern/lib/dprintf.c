@@ -4,7 +4,11 @@
 #include <dev/serial.h>
 
 #include <lib/debug.h>
+#include <lib/spinlock.h>
 #include <lib/stdarg.h>
+
+static spinlock_t dprintf_lk;
+static spinlock_t vdprintf_lk;
 
 struct dprintbuf
 {
@@ -39,6 +43,7 @@ putch (int ch, struct dprintbuf *b)
 int
 vdprintf (const char *fmt, va_list ap)
 {
+    spinlock_acquire(&vdprintf_lk);
 
     struct dprintbuf b;
 
@@ -49,18 +54,24 @@ vdprintf (const char *fmt, va_list ap)
     b.buf[b.idx] = 0;
     cputs (b.buf);
 
+    spinlock_release(&vdprintf_lk);
+
     return b.cnt;
 }
 
 int
 dprintf (const char *fmt, ...)
 {
+    spinlock_acquire(&dprintf_lk);
+
     va_list ap;
     int cnt;
 
     va_start(ap, fmt);
     cnt = vdprintf (fmt, ap);
     va_end(ap);
+
+    spinlock_release(&dprintf_lk);
 
     return cnt;
 }
