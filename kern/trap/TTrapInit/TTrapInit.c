@@ -10,7 +10,6 @@ trap_init_array(void)
 {
   KERN_ASSERT(inited == FALSE);
   memzero(&(TRAP_HANDLER), sizeof(trap_cb_t) * 8 * 256);
-  memzero(&(TRAP_CB), sizeof(tf_t) * TRAP_CB_N);
   inited = TRUE;
 }
 
@@ -40,9 +39,13 @@ trap_init(unsigned int cpu_idx){
   // TODO: for CPU # [cpu_idx], register appropriate trap handler for each trap number,
   // with trap_handler_register function defined above.
   int i;
-  for (i = 0; i < TRAP_CB_N; i ++) {
-    trap_handler_register(cpu_idx, i, (trap_cb_t)&TRAP_CB[i]);
+  for (i = T_DIVIDE; i <= T_SECEV; i ++) {
+    trap_handler_register(cpu_idx, i, exception_handler);
   }
+  for (i = IRQ_TIMER; i <= IRQ_IDE2; i ++) {
+    trap_handler_register(cpu_idx, T_IRQ0 + i, interrupt_handler);
+  }
+  trap_handler_register(cpu_idx, T_SYSCALL, trap);
 
 	if (cpu_idx == 0){
 		KERN_INFO("[BSP KERN] Done.\n");
