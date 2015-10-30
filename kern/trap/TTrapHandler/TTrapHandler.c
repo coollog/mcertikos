@@ -101,7 +101,7 @@ static int timer_intr_handler (void)
   // CUSTOM
   intr_local_disable();
 
-  // KERN_DEBUG("Got timer interrupt for cpu %d\n", get_pcpu_idx());
+  KERN_DEBUG("Got timer interrupt for cpu %d\n", get_pcpu_idx());
   sched_update();
 
   intr_local_enable();
