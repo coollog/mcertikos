@@ -22,7 +22,7 @@ void thread_init(unsigned int mbi_addr)
 	tcb_set_state(0, TSTATE_RUN);
 
 	// CUSTOM
-	Initialize scheduler elapsed time.
+	// Initialize scheduler elapsed time.
 	int i;
 	for (i = 0; i < NUM_CPUS; i ++) {
 		milliElapsed[i] = 0;
