@@ -103,12 +103,13 @@ void sched_update() {
 	milliElapsed[curCPU] += elapsedTime;
 	// KERN_DEBUG("milliElapsed for cpu %d = %d\n", curCPU, milliElapsed[curCPU]);
 	if (milliElapsed[curCPU] >= SCHED_SLICE) {
-		milliElapsed[curCPU] = 0;
+		// milliElapsed[curCPU] = 0;
 		// KERN_DEBUG("milliElapsed exceeded %d for cpu %d, new=%d\n", SCHED_SLICE, curCPU, milliElapsed[curCPU]);
 
 		// spinlock_release(&pthread_sched_lk);
 
 		thread_yield();
+		milliElapsed[curCPU] = 0;
 	} else {
 		// spinlock_release(&pthread_sched_lk);
 	}
