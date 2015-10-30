@@ -6,6 +6,9 @@
 #include <lib/types.h>
 #include <lib/spinlock.h>
 
+// CUSTOM
+static spinlock_t debug_normal_lk;
+
 void
 debug_init(void)
 {
@@ -29,12 +32,18 @@ debug_info(const char *fmt, ...)
 void
 debug_normal(const char *file, int line, const char *fmt, ...)
 {
+	// CUSTOM
+	spinlock_acquire(&debug_normal_lk);
+
 	dprintf("[D] %s:%d: ", file, line);
 
 	va_list ap;
 	va_start(ap, fmt);
 	vdprintf(fmt, ap);
 	va_end(ap);
+
+	// CUSTOM
+	spinlock_release(&debug_normal_lk);
 }
 
 #define DEBUG_TRACEFRAMES	10

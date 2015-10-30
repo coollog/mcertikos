@@ -4,10 +4,10 @@
 #include <dev/serial.h>
 
 #include <lib/debug.h>
-#include <lib/spinlock.h>
 #include <lib/stdarg.h>
 
 // CUSTOM
+#include <lib/spinlock.h>
 static spinlock_t dprintf_lk;
 static spinlock_t vdprintf_lk;
 
