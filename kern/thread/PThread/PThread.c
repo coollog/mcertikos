@@ -103,7 +103,7 @@ void sched_update() {
 		// KERN_DEBUG("milliElapsed exceeded %d for cpu %d, new=%d\n", SCHED_SLICE, curCPU, milliElapsed[curCPU]);
 
 		spinlock_release(&pthread_sched_lk[curCPU]);
-		intr_eoi();
+		// intr_eoi();
 
 		thread_yield();
 	} else {
